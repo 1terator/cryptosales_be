@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    command: sh start.sh
+    networks:
+      - proxy
+    depends_on:
+      - postgres
+
+  postgres:
+    restart: always
+    image: postgres:16
+    networks:
+      - proxy
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - 5437:${DB_PORT}
+    expose:
+      - ${DB_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+networks:
+  proxy:
+    driver: bridge
+
+volumes:
+  postgres_data:
